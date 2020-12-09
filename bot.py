@@ -60,7 +60,7 @@ class Bot:
             if player_num_turn == 1:
                 move = random.choice(current_game_progress['possible_moves'])
             else:
-                move = solver.next_move(self._game, 4)
+                move = solver.next_move(self._game, 4, player_num_turn)
             end = time.time()
             logging.debug(f'{player_num_turn} {move} {end - start}')
             self._game.move(move)
