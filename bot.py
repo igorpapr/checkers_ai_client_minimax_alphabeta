@@ -3,6 +3,9 @@ import logging
 import random
 
 import aiohttp
+from checkers import game
+
+import solver
 
 
 class Bot:
@@ -10,6 +13,7 @@ class Bot:
         self._api_url = 'http://localhost:8081'
         self._session = aiohttp.ClientSession()
         self._players = {}
+        self._game = game.Game()
         self._rand_sleep = rand_sleep
         self._loop = loop
 
@@ -33,6 +37,7 @@ class Bot:
                 json=json,
                 headers=headers
         ) as resp:
+            logging.debug(await resp.text())
             resp = (await resp.json())['data']
             logging.info(f'Player {player} made move {move}, response: {resp}')
 
@@ -47,8 +52,15 @@ class Bot:
 
         while is_started and not is_finished:
             player_num_turn = 1 if current_game_progress['whose_turn'] == 'RED' else 2
+            #assert self._game.whose_turn() == player_num_turn
 
-            move = random.choice(current_game_progress['possible_moves'])
+            move = None
+            if player_num_turn == 1:
+                move = random.choice(current_game_progress['possible_moves'])
+            else:
+                move = solver.next_move(self._game, 4)
+            logging.debug(f'{player_num_turn} {move}')
+            self._game.move(move)
 
             await self._make_move(player_num_turn, move)
 
@@ -65,24 +77,26 @@ class Bot:
         asyncio.run_coroutine_threadsafe(self.start(), self._loop)
 
     async def start(self):
-        logging.info('API Tester initialized, test will start in 2 secs')
-        await asyncio.sleep(2.0)
+        try:
+            logging.info('API Tester initialized, test will start in 2 secs')
 
-        asyncio.ensure_future(self._prepare_player(1))
-        asyncio.ensure_future(self._prepare_player(2))
+            asyncio.ensure_future(self._prepare_player(1))
+            asyncio.ensure_future(self._prepare_player(2))
 
-        logging.info('Game started, players initialized')
+            logging.info('Game started, players initialized')
 
-        await asyncio.sleep(0.5)
+            await asyncio.sleep(0.5)
 
-        logging.info(f'Players: {self._players}')
+            logging.info(f'Players: {self._players}')
 
-        await asyncio.sleep(0.5)
+            await asyncio.sleep(0.5)
 
-        await self._play_game()
+            await self._play_game()
 
-        logging.info('Game finished')
-        last_game_progress = await self._get_game()
-        logging.info(str(last_game_progress))
+            logging.info('Game finished')
+            last_game_progress = await self._get_game()
+            logging.info(str(last_game_progress))
 
-        await self._session.close()
+            await self._session.close()
+        except Exception as e:
+            logging.error(e, exc_info=True)
