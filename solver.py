@@ -10,7 +10,6 @@ def next_move(game: Game, depth, maximizing_player):
     for move in game.get_possible_moves():
         new_game = deepcopy(game)
         new_game.move(move)
-        # TODO: multiple moves by single player
         b = -_minimax(new_game, depth - 1, new_game.whose_turn(), maximizing_player, float('-inf'), float('+inf'))
         if a < b:
             a = b
