@@ -1,4 +1,3 @@
-import logging
 from copy import deepcopy
 
 from checkers.game import Game
@@ -43,5 +42,5 @@ def _minimax(game: Game, depth, player_num, maximizing_player, alpha, beta):
         return value
 
 
-def heuristic(game: Game, player_num=1):
+def heuristic(game: Game, player_num):
     return len(game.board.searcher.get_pieces_by_player(player_num))

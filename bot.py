@@ -55,7 +55,7 @@ class Bot:
             player_num_turn = 1 if current_game_progress['whose_turn'] == 'RED' else 2
             #assert self._game.whose_turn() == player_num_turn
 
-            move = None
+
             start = time.time()
             if player_num_turn == 1:
                 move = random.choice(current_game_progress['possible_moves'])
