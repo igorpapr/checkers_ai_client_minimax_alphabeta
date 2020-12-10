@@ -18,7 +18,7 @@ def next_move(game: Game, depth, maximizing_player):
 
 def _minimax(game: Game, depth, player_num, maximizing_player, alpha, beta):
     if depth == 0 or game.is_over():
-        return heuristic(game, player_num)
+        return heuristic(game, maximizing_player)
 
     if player_num == maximizing_player:
         value = float('-inf')
