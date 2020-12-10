@@ -68,11 +68,13 @@ class Bot:
                     logging.debug(f'apply last move {move}')
                     self._game.move(move)
 
-            moves = self._game.get_possible_moves()
-            if not moves:
+            player_num_turn = 1 if current_game_progress['whose_turn'] == 'RED' else 2
+            start = time.time()
+            move = solver.next_move(self._game, 4, player_num_turn, True)
+            end = time.time()
+            logging.debug(f'{player_num_turn} {move} {end - start}')
+            if not move:
                 break
-            move = random.choice(moves)
-            await asyncio.sleep(0.5)
             self._game.move(move)
 
             await self._make_move(move)

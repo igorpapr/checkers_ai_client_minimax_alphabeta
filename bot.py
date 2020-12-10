@@ -64,10 +64,10 @@ class Bot:
                 for move in last_move['last_moves']:
                     self._game.move(move)
 
-            player_num_turn = 1 if current_game_progress['whose_turn'] == 'RED' else 2
             # evaluating time and deciding which move to do
+            player_num_turn = 1 if current_game_progress['whose_turn'] == 'RED' else 2
             start = time.time()
-            move = solver.next_move(self._game, 4, player_num_turn)
+            move = solver.next_move(self._game, 4, player_num_turn, False)
             end = time.time()
             logging.debug(f'{player_num_turn} {move} {end - start}')
             if not move:
