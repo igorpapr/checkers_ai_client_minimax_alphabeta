@@ -25,7 +25,8 @@ def _minimax(game: Game, depth, player_num, maximizing_player, alpha, beta, test
         for move in game.get_possible_moves():
             new_game = deepcopy(game)
             new_game.move(move)
-            value = max(value, _minimax(new_game, depth - 1, new_game.whose_turn(), maximizing_player, alpha, beta, test))
+            value = max(value,
+                        _minimax(new_game, depth - 1, new_game.whose_turn(), maximizing_player, alpha, beta, test))
             alpha = max(alpha, value)
             if alpha >= beta:
                 break
@@ -35,7 +36,8 @@ def _minimax(game: Game, depth, player_num, maximizing_player, alpha, beta, test
         for move in game.get_possible_moves():
             new_game = deepcopy(game)
             new_game.move(move)
-            value = min(value, _minimax(new_game, depth - 1, new_game.whose_turn(), maximizing_player, alpha, beta, test))
+            value = min(value,
+                        _minimax(new_game, depth - 1, new_game.whose_turn(), maximizing_player, alpha, beta, test))
             beta = min(beta, value)
             if beta <= alpha:
                 break
