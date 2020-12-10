@@ -2,7 +2,7 @@ import asyncio
 import logging
 import threading
 
-from bot import Bot
+from test_bot import Bot
 
 if __name__ == '__main__':
     logging.basicConfig(

@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import time
+import random
 
 import aiohttp
 from checkers import game
@@ -11,7 +12,7 @@ import solver
 class Bot:
     def __init__(self, loop):
         self._api_url = 'http://localhost:8081'
-        self._team_name = 'Дмитрий Гордон'
+        self._team_name = 'Дмитрий Негрдон'
         self._session = aiohttp.ClientSession()
         self._player = {}
         self._game = game.Game()
@@ -37,6 +38,7 @@ class Bot:
                 json=json,
                 headers=headers
         ) as resp:
+            logging.debug(await resp.text())
             resp = (await resp.json())['data']
             logging.info(f'Player {self._team_name} made move {move}, response: {resp}')
 
@@ -60,18 +62,17 @@ class Bot:
 
             # storing last moves of the opponent
             last_move = current_game_progress['last_move']
+            logging.debug(last_move)
             if last_move and last_move['player'] != self._player['color']:
                 for move in last_move['last_moves']:
+                    logging.debug(f'apply last move {move}')
                     self._game.move(move)
 
-            player_num_turn = 1 if current_game_progress['whose_turn'] == 'RED' else 2
-            # evaluating time and deciding which move to do
-            start = time.time()
-            move = solver.next_move(self._game, 4, player_num_turn)
-            end = time.time()
-            logging.debug(f'{player_num_turn} {move} {end - start}')
-            if not move:
+            moves = self._game.get_possible_moves()
+            if not moves:
                 break
+            move = random.choice(moves)
+            await asyncio.sleep(0.5)
             self._game.move(move)
 
             await self._make_move(move)
