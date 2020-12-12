@@ -56,7 +56,7 @@ class Bot:
                 current_game_progress = await self._get_game()
                 is_finished = current_game_progress['is_finished']
                 is_started = current_game_progress['is_started']
-                await asyncio.sleep(0.5)
+                await asyncio.sleep(0.1)
                 continue
 
             # storing last moves of the opponent
