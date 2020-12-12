@@ -17,6 +17,7 @@ class Bot:
         self._game = game.Game()
         self._loop = loop
         self._last_move = None
+        self._elapsed_time = []
 
     async def _prepare_player(self):
         async with self._session.post(
@@ -55,7 +56,7 @@ class Bot:
                 current_game_progress = await self._get_game()
                 is_finished = current_game_progress['is_finished']
                 is_started = current_game_progress['is_started']
-                await asyncio.sleep(0.7)
+                await asyncio.sleep(0.5)
                 continue
 
             # storing last moves of the opponent
@@ -69,7 +70,8 @@ class Bot:
             start = time.time()
             move = solver.next_move(self._game, 4, player_num_turn, False)
             end = time.time()
-            logging.debug(f'{player_num_turn} {move} {end - start}')
+            self._elapsed_time.append(end - start)
+            # logging.debug(f'{player_num_turn} {move} {end - start}')
             if not move:
                 break
             self._game.move(move)
@@ -102,6 +104,7 @@ class Bot:
             logging.info('Game finished')
             last_game_progress = await self._get_game()
             logging.info(str(last_game_progress))
+            logging.debug('Maximal time for choosing next move ' + str(max(self._elapsed_time)))
 
             await self._session.close()
         except Exception as e:
